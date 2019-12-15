@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using WebShop.Core.Models;
+using WebShop.Core.ViewModels;
 using WebShop.DataAccess.InMemory;
 
 
@@ -12,10 +13,12 @@ namespace WebShop.WebUI.Controllers
     public class ProductManagerController : Controller
     {
         ProductRepository context;
+        ProductCategoryRepository productCategories;
 
         public ProductManagerController()
         {
             context = new ProductRepository();
+            productCategories = new ProductCategoryRepository();
         }
         // GET: ProductManager
         public ActionResult Index()
@@ -26,8 +29,11 @@ namespace WebShop.WebUI.Controllers
 
         public ActionResult Create()
         {
-            Product product = new Product();
-            return View(product);
+            ProductManagerViewModel viewModel = new ProductManagerViewModel();
+
+            viewModel.Product = new Product();
+            viewModel.ProductCategories = productCategories.Collection();
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -57,7 +63,10 @@ namespace WebShop.WebUI.Controllers
             }
             else
             {
-                return View(product);
+                ProductManagerViewModel viewModel = new ProductManagerViewModel();
+                viewModel.Product = product;
+                viewModel.ProductCategories = productCategories.Collection();
+                return View(viewModel);
             }
 
         }
@@ -120,8 +129,7 @@ namespace WebShop.WebUI.Controllers
             {
                 context.Delete(Id);
                 context.Commit();
-                return View(productToDelete);
-
+                return RedirectToAction("Index");
             }
         }
     }
