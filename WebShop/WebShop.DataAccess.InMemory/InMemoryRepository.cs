@@ -4,11 +4,12 @@ using System.Linq;
 using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
+using WebShop.Core.Contracts;
 using WebShop.Core.Models;
 
 namespace WebShop.DataAccess.InMemory
 {
-    public class InMemoryRepository<T> where T : BaseEntity
+    public class InMemoryRepository<T> : IRepository<T> where T : BaseEntity
     {
         ObjectCache cache = MemoryCache.Default;
         List<T> items;
@@ -24,7 +25,7 @@ namespace WebShop.DataAccess.InMemory
                 items = new List<T>();
             }
         }
-
+        
         public void Commit()
         {
             cache[className] = items;
